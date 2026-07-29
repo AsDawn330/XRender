@@ -15,3 +15,6 @@ cmake-build-release/
 *.o
 *.out
 EOF
+
+#缓存文件
+.cache/
