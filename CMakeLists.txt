@@ -19,6 +19,8 @@ add_executable(XRenderer
     src/main.cpp 
     src/glad.c
     src/shader.cpp
+    src/Mesh.cpp
+    
     ${SHADER_FILES}
 )
 
