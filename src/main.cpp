@@ -1,7 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "shader.h"
+#include "Shader.h"
 #include "Mesh.h"
 
 
@@ -32,6 +32,8 @@ int main() {
     // 测试 1：正常 Shader 加载与编译
     // ==========================================
     Shader basicShader("assets/shaders/test_basic.vert", "assets/shaders/test_basic.frag");
+    basicShader.Use();
+    basicShader.setMat4("uModel", glm::mat4(1.0f));
     std::vector<Vertex> vertices = {
     // 位置 (vec3)          // 法线 (vec3)       // 纹理坐标 (vec2)
     { glm::vec3( 0.5f,  0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f) }, // 右上
@@ -46,26 +48,18 @@ int main() {
 
     Mesh testMesh(vertices, indices);
 
-    GLenum err = glGetError();
-    if (err != GL_NO_ERROR) {
-        std::cerr << "Mesh setup failed! OpenGL Error Code: " << err << std::endl;
-    }
-
-    glDisable(GL_CULL_FACE);
-    glDisable(GL_DEPTH_TEST);
 
     // 保持窗口打开，方便你观察控制台输出
     std::cout << "Press ESC to exit..." << std::endl;
+    float cf = 0.0f;
     while (!glfwWindowShouldClose(window)) {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) break;
-
-        glClearColor(0.2f, 0.2f, 0.2f, 1.0f); 
+        cf += 0.01f;
+        cf = std::fmod(cf, 1.0f);
+        glClearColor(cf, cf, cf, 1.0f); 
         glClear(GL_COLOR_BUFFER_BIT);
         testMesh.Draw(basicShader);
-        GLenum err;
-        while ((err = glGetError()) != GL_NO_ERROR) {
-            std::cerr << "OpenGL Error Code: " << err << std::endl;
-        }
+        
         glfwSwapBuffers(window);
 
         glfwPollEvents();

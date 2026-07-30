@@ -17,8 +17,7 @@ set(SHADER_DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets/shaders")
 # 1. 添加可执行文件，把你的源码和 GLAD 的源码都加进去
 add_executable(XRenderer 
     src/main.cpp 
-    src/glad.c
-    src/shader.cpp
+    src/Shader.cpp
     src/Mesh.cpp
     
     ${SHADER_FILES}
@@ -26,14 +25,26 @@ add_executable(XRenderer
 
 # 2. 告诉编译器去哪里找头文件（包含我们自己的 include 目录）
 # target_include_directories(XRender PRIVATE include)
-include_directories(include)
-include_directories(third_party/glm)
+target_include_directories(XRenderer PRIVATE 
+    include
+    third_party/glm
+    third_party/glad/include
+)
+
 # 3. 让 CMake 自动寻找系统里的 OpenGL 和 GLFW
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 
-# 4. 将 OpenGL 和 GLFW 链接到你的可执行文件上
-target_link_libraries(XRenderer PRIVATE OpenGL::GL glfw)
+# 添加 第三方 GLAD 库
+add_library(glad STATIC 
+    third_party/glad/src/glad.c
+)
+target_include_directories(glad PUBLIC 
+    third_party/glad/include
+)
+# 4. 将 OpenGL ，GLFW ，GLAD 链接到你的可执行文件上
+
+target_link_libraries(XRenderer PRIVATE OpenGL::GL glfw glad)
 
 #将shader文件复制到目标文件夹
 add_custom_command(TARGET XRenderer POST_BUILD

@@ -1,5 +1,5 @@
 #include "Mesh.h"
-#include "shader.h"
+#include "Shader.h"
 #include "glad/glad.h"
 #include <cstddef>
 
@@ -37,8 +37,7 @@ void Mesh::Draw(const Shader& shader) const
 {
     shader.Use();
     glBindVertexArray(VAO);
-    //glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
 Mesh::~Mesh()
