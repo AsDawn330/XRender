@@ -13,13 +13,12 @@ file(GLOB_RECURSE SHADER_FILES
 set(SHADER_SOURCE_DIR "${CMAKE_SOURCE_DIR}/assets/shaders")
 set(SHADER_DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets/shaders")
 
+#添加src的cpp文件
+file(GLOB_RECURSE SRC_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
 
 # 1. 添加可执行文件，把你的源码和 GLAD 的源码都加进去
 add_executable(XRenderer 
-    src/main.cpp 
-    src/Shader.cpp
-    src/Mesh.cpp
-    
+    ${SRC_FILES}
     ${SHADER_FILES}
 )
 

@@ -1,4 +1,7 @@
 #include "Transform.h"
+#include "gtc/constants.hpp"
+#include "gtc/matrix_transform.hpp"
+
 
 //Constructor
 Transform::Transform() : position(0.0f), rotation(0.0f), scale(1.0f)
@@ -8,6 +11,24 @@ Transform::Transform(const glm::vec3& position, const glm::vec3& rotation, const
     : position(position), rotation(rotation), scale(scale)
 {
 }
+//Rotation & Quaternion
+glm::vec3 Transform::getRotation() const{
+    if (eulerDirty)
+    {
+        rotation = glm::degrees(glm::eulerAngles(quaternion));
+        eulerDirty = false;
+    }
+    return rotation;
+}
+glm::quat Transform::getQuaternion() const{
+    if (quaternionDirty)
+    {
+        quaternion = glm::quat(glm::radians(rotation));
+        quaternionDirty = false;
+    }
+    return quaternion;
+}
+
 //Matrix
 const glm::mat4& Transform::getMatrix() const
 {
@@ -32,23 +53,41 @@ void Transform::updateMatrix() const
     }
 
     glm::mat4 translate = glm::translate(glm::mat4(1.0f), position);
-    glm::mat4 rotate = glm::toMat4(quaternion);
-    glm::mat4 scale = glm::scale(glm::mat4(1.0f), scale);
+    glm::mat4 rotate = glm::mat4_cast(quaternion);
+    glm::mat4 scale_m = glm::scale(glm::mat4(1.0f), scale);
 
-    matrix = translate * rotate * scale;
+    matrix = translate * rotate * scale_m;
 }
 //Direction
 glm::vec3 Transform::getForward() const
 {
-    return glm::vec3(quaternion * glm::vec3(0.0f, 0.0f, -1.0f));
+    if (quaternionDirty)
+    {
+        quaternion = glm::quat(glm::radians(rotation));
+        quaternionDirty = false;
+        eulerDirty = true;
+    }
+    return quaternion * glm::vec3(0.0f, 0.0f, -1.0f);
 }
 glm::vec3 Transform::getRight() const
 {
-    return glm::vec3(quaternion * glm::vec3(1.0f, 0.0f, 0.0f));
+    if (quaternionDirty)
+    {
+        quaternion = glm::quat(glm::radians(rotation));
+        quaternionDirty = false;
+        eulerDirty = true;
+    }
+    return quaternion * glm::vec3(1.0f, 0.0f, 0.0f);
 }
 glm::vec3 Transform::getUp() const
 {
-    return glm::vec3(quaternion * glm::vec3(0.0f, 1.0f, 0.0f));
+    if (quaternionDirty)
+    {
+        quaternion = glm::quat(glm::radians(rotation));
+        quaternionDirty = false;
+        eulerDirty = true;
+    }
+    return quaternion * glm::vec3(0.0f, 1.0f, 0.0f);
 }
 //Rotate
 void Transform::rotate(const glm::vec3 deltaRotation)
@@ -58,9 +97,8 @@ void Transform::rotate(const glm::vec3 deltaRotation)
         rotation = glm::degrees(glm::eulerAngles(quaternion));
         eulerDirty = false;
     }
-    rotation += deltaRotation;
-    dirty = true;
-    quaternionDirty = true;
+    glm::quat delta = glm::quat(glm::radians(deltaRotation));
+    rotate(delta);
 }
 void Transform::rotate(const glm::quat deltaQuaternion)
 {
@@ -69,7 +107,7 @@ void Transform::rotate(const glm::quat deltaQuaternion)
         quaternion = glm::quat(glm::radians(rotation));
         quaternionDirty = false;
     }
-    quaternion *= deltaQuaternion;
+    quaternion = deltaQuaternion * quaternion;
     dirty = true;
     quaternionDirty = true;
     eulerDirty = true;
