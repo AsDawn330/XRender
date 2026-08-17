@@ -41,4 +41,11 @@ bool Engine::shouldClose() const {
 void Engine::Update() {
     glfwSwapBuffers(m_window);
     glfwPollEvents();
+    UpdateTime();
+}
+
+void Engine::UpdateTime() {
+    m_currentFrameTime = static_cast<float>(glfwGetTime());
+    m_deltaTime = m_currentFrameTime - m_lastFrameTime;
+    m_lastFrameTime = m_currentFrameTime;
 }

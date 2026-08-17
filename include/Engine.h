@@ -17,8 +17,16 @@ public:
     bool shouldClose() const;
     void Update();
     GLFWwindow* GetWindow() const { return m_window; }
+
+    float GetTime() const { return m_currentFrameTime; }
+    float GetDeltaTime() const { return m_deltaTime; };
 private:
     GLFWwindow* m_window;
+    float m_lastFrameTime;
+    float m_currentFrameTime;
+    float m_deltaTime;
+
+    void UpdateTime();
 };
 
 #endif
