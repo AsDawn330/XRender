@@ -12,6 +12,7 @@ Shader 管理模块：封装 Shader 类，实现从文件读取、编译、链�
 数学库集成：通过 Homebrew 引入 GLM 库，并配置到 CMake。
 变换系统 (Transform)：实现 Model（模型）、View（观察）、Projection（投影）三大矩阵。
 相机系统 (Camera)：封装 Camera 类，实现 MVP 矩阵的动态计算，让 3D 场景具备纵深感。
+渲染引擎（Engine）：封装Engine 类，实现OpenGL的窗口初始化和循环过程，不在main函数中写复杂的OpenGL逻辑。
 阶段三：交互系统与输入控制 (Input System)
 🎯 阶段目标：建立一套解耦的输入处理机制，实现第一人称视角的自由漫游。
 📦 模块规划：

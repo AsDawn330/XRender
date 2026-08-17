@@ -46,3 +46,19 @@ Mesh::~Mesh()
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
 }
+
+Mesh Cube()
+{
+    return Mesh(
+        std::vector<Vertex>{
+            Vertex(glm::vec3(1.0f, 0.0f, 1.0f), glm::vec3(0.0f,1.0f,0.0f), glm::vec2(1.0f,0.0f)),
+            Vertex(glm::vec3(-1.0f, 0.0f, 1.0f), glm::vec3(0.0f,1.0f,0.0f), glm::vec2(0.0f,0.0f)),
+            Vertex(glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f,1.0f,0.0f), glm::vec2(0.0f,1.0f)),
+            Vertex(glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f,1.0f,0.0f), glm::vec2(1.0f,1.0f))
+        },
+        std::vector<unsigned int>{
+            0, 1, 2,
+            2, 3, 0
+        }
+    );
+}
