@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
-project(XRender)
+project(XRenderer)
+
 
 # 设置 C++ 标准为 17
 set(CMAKE_CXX_STANDARD 17)
@@ -12,6 +13,9 @@ file(GLOB_RECURSE SHADER_FILES
 
 set(SHADER_SOURCE_DIR "${CMAKE_SOURCE_DIR}/assets/shaders")
 set(SHADER_DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets/shaders")
+
+
+
 
 #添加src的cpp文件
 file(GLOB_RECURSE SRC_FILES "${CMAKE_SOURCE_DIR}/src/*.cpp")
@@ -28,6 +32,7 @@ target_include_directories(XRenderer PRIVATE
     include
     third_party/glm
     third_party/glad/include
+    third_party/stb/include
 )
 
 # 3. 让 CMake 自动寻找系统里的 OpenGL 和 GLFW
@@ -52,3 +57,13 @@ add_custom_command(TARGET XRenderer POST_BUILD
         "${SHADER_DEST_DIR}"
     COMMENT "Copying shaders to output directory..."
 )
+
+# 将纹理资源文件复制到目标文件夹
+add_custom_command(TARGET XRenderer POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/assets/textures"
+        "${CMAKE_CURRENT_BINARY_DIR}/assets/textures"
+    COMMENT "Copying textures to output directory..."
+)
+
+target_compile_definitions(XRenderer PRIVATE PROJECT_SOURCE_DIR="${CMAKE_SOURCE_DIR}")
