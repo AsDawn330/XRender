@@ -1,71 +1,57 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "Shader.h"
-#include "Mesh.h"
+#include <unistd.h>
 
+
+#include "Shader.h"
+#include "Camera.h"
+#include "Transform.h"
+#include "Mesh.h"
+#include "Engine.h"
+#include "Texture.h"
 
 int main() {
-    // 1. 初始化 GLFW 和 OpenGL 上下文（Shader 编译必须有上下文）
-    if (!glfwInit()) {
-        std::cerr << "Failed to initialize GLFW!" << std::endl;
-        return -1;
-    }
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    chdir(PROJECT_SOURCE_DIR); 
+    Engine engine = Engine();
+
+    // --- 5. 初始化场景资源 (必须在 GLAD 初始化之后) ---
+    Shader shader("assets/shaders/test_basic.vert", 
+              "assets/shaders/test_basic.frag");
     
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Shader Test", NULL, NULL);
-    if (!window) {
-        std::cerr << "Failed to create GLFW window!" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
+    Texture texture;
+    texture.LoadFromPath("./assets/textures/test_basic.jpg");
 
-    if (!gladLoadGL()) {
-        std::cerr << "Failed to initialize GLAD!" << std::endl;
-        return -1;
-    }
+    Mesh plane = Plane(); // 假设你的静态工厂方法叫 CreateCube
+    Transform mesh_transform;        // 立方体默认在原点
 
-    // ==========================================
-    // 测试 1：正常 Shader 加载与编译
-    // ==========================================
-    Shader basicShader("assets/shaders/test_basic.vert", "assets/shaders/test_basic.frag");
-    basicShader.Use();
-    basicShader.setMat4("uModel", glm::mat4(1.0f));
-    std::vector<Vertex> vertices = {
-    // 位置 (vec3)          // 法线 (vec3)       // 纹理坐标 (vec2)
-    { glm::vec3( 0.5f,  0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 1.0f) }, // 右上
-    { glm::vec3( 0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(1.0f, 0.0f) }, // 右下
-    { glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f) }, // 左下
-    { glm::vec3(-0.5f,  0.5f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec2(0.0f, 1.0f) }  // 左上
-    };
-    std::vector<unsigned int> indices = {
-    0, 1, 3, // 第一个三角形 (右上, 右下, 左上)
-    1, 2, 3  // 第二个三角形 (右下, 左下, 左上)
-    };
+    Camera camera;
+    camera.aspectRatio = 800.0f / 600.0f;
+    camera.transform.setPosition(glm::vec3(0.0f, 2.0f, 5.0f)); // 相机往后退
+    camera.transform.setRotation(glm::vec3(-15.0f, 0.0f, 0.0f)); // 俯视
 
-    Mesh testMesh(vertices, indices);
+    // --- 6. 极简渲染循环 ---
+    while (!engine.shouldClose()) {
+        // 清屏（颜色缓冲 + 深度缓冲）
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-    // 保持窗口打开，方便你观察控制台输出
-    std::cout << "Press ESC to exit..." << std::endl;
-    float cf = 0.0f;
-    while (!glfwWindowShouldClose(window)) {
-        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) break;
-        cf += 0.01f;
-        cf = std::fmod(cf, 1.0f);
-        glClearColor(cf, cf, cf, 1.0f); 
-        glClear(GL_COLOR_BUFFER_BIT);
-        testMesh.Draw(basicShader);
+        mesh_transform.rotate(glm::vec3(0.0f, 3.0f * engine.GetDeltaTime(), 0.0f));
+        // 绑定 Shader 并传入 MVP 矩阵 以及贴图设置
+        shader.Use();
+        shader.setInt("ourTexture", 0);
+        glm::mat4 mvp = camera.getProjectionMatrix() * camera.getViewMatrix() * mesh_transform.getMatrix();
+        shader.setMat4("uModel", mvp);
+        texture.Bind();
         
-        glfwSwapBuffers(window);
 
-        glfwPollEvents();
+        // 绘制立方体
+        plane.Draw(shader);
+
+        // 交换缓冲并处理事件
+        engine.Update();
     }
 
-    glfwDestroyWindow(window);
-    glfwTerminate();
+
     return 0;
 }

@@ -47,8 +47,8 @@ Mesh::~Mesh()
     glDeleteBuffers(1, &EBO);
 }
 
-Mesh Cube()
-{
+Mesh Plane()
+{   
     return Mesh(
         std::vector<Vertex>{
             Vertex(glm::vec3(1.0f, 0.0f, 1.0f), glm::vec3(0.0f,1.0f,0.0f), glm::vec2(1.0f,0.0f)),

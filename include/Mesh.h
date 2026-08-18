@@ -1,5 +1,5 @@
-#ifndef MESH_H
-#define MESH_H
+#ifndef _MESH_H_
+#define _MESH_H_
 #include "glm.hpp"
 #include <vector>
 class Shader;
@@ -33,7 +33,7 @@ private:
 };
 
 
-Mesh Cube();
+Mesh Plane();
 
 
 #endif

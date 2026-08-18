@@ -9,6 +9,7 @@ Engine::Engine(unsigned int width, unsigned int height, const std::string& title
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
     // 3. 创建窗口
     m_window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
     if (!m_window) {
@@ -22,6 +23,7 @@ Engine::Engine(unsigned int width, unsigned int height, const std::string& title
     }
     // 5. 设置默认的 OpenGL 状态
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
 
     std::cout << "Engine initialized successfully. OpenGL Version: " 
               << glGetString(GL_VERSION) << std::endl;

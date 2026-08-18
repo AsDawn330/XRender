@@ -1,3 +1,6 @@
+#ifndef _CAMERA_H_
+#define _CAMERA_H_
+
 #include "Transform.h"
 
 enum class ProjectionType{
@@ -42,3 +45,5 @@ public:
     glm::mat4 getProjectionMatrix() const;
     glm::mat4 getViewMatrix() const;
 };
+
+#endif

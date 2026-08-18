@@ -1,5 +1,5 @@
-#ifndef _ENGINE__H
-#define _ENGINE__H
+#ifndef _ENGINE_H_
+#define _ENGINE_H_
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

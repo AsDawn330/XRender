@@ -1,5 +1,5 @@
-#ifndef TRANSFORM_H
-#define TRANSFORM_H
+#ifndef _TRANSFORM_H_
+#define _TRANSFORM_H_
 
 #include "glm.hpp"
 #include "gtc/quaternion.hpp"

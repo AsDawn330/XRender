@@ -1,5 +1,5 @@
-#ifndef SHADER_H
-#define SHADER_H
+#ifndef _SHADER_H_
+#define _SHADER_H_
 
 #include <string>
 #include "glm.hpp"
@@ -18,6 +18,7 @@ public:
     void setVec3(const string &name, vec3 value) const;
     void setVec4(const string &name, vec4 value) const;
     void setMat4(const string &name, mat4 value) const;
+    unsigned int GetProgram() const{return program;}
 private:
     unsigned int program;
     string ReadShaderFile(const string &path);
